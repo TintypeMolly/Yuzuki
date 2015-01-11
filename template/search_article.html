@@ -1,12 +1,11 @@
 {% extends "board.html" %}
-{% block board_header %}
+{% block subtitle %}
     {% if board %}
-        <h1>{{ board.name }} 검색결과</h1>
+        <h1>{{ board.repr }} 검색결과</h1>
     {% else %}
         <h1>검색결과</h1>
     {% endif %}
 {% endblock %}
-
 {% block board_content %}
     {% for article in items %}
         <tr>
