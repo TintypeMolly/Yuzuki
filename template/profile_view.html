@@ -1,69 +1,43 @@
 {% extends "base.html" %}
-{% block head %}
-    <style>
-        .profile-caption {
-            margin-bottom: 20px;
-        }
-
-        .profile-row {
-            margin-top: 20px;
-        }
-
-        .profile-row > div {
-            font-size: 13pt;
-        }
-
-        .profile-label {
-            font-weight: bold;
-        }
-
-        .profile-bio {
-            margin-top: 20px;
-            min-height: 100px;
-        }
-    </style>
+{% block subtitle %}
+    <h2>개인정보</h2>
 {% endblock %}
 {% block body %}
-    <div class="row profile-caption">
-        <div class="col-xs-12">
-            <h1>내 정보</h1>
-        </div>
-    </div>
-    <div class="row profile-row">
-        <div class="col-xs-2 profile-label">ID</div>
-        <div class="col-xs-10">{{ request.user.username }}</div>
-    </div>
-    <div class="row profile-row">
-        <div class="col-xs-2 profile-label">별명</div>
-        <div class="col-xs-10">{{ request.user.nickname | e }}</div>
-    </div>
-    <div class="row profile-row">
-        <div class="col-xs-2 profile-label">실명</div>
-        <div class="col-xs-10">{{ request.user.pd_realname }}</div>
-    </div>
-    <div class="row profile-row">
-        <div class="col-xs-2 profile-label">이메일</div>
-        <div class="col-xs-10">{{ request.user.pd_email or "미입력" }}</div>
-    </div>
-    <div class="row profile-row">
-        <div class="col-xs-2 profile-label">주소</div>
-        <div class="col-xs-10">{{ request.user.pd_address or "미입력" }}</div>
-    </div>
-    <div class="row profile-row">
-        <div class="col-xs-2 profile-label">전화번호</div>
-        <div class="col-xs-10">{{ request.user.pd_phone or "미입력" }}</div>
-    </div>
-    <div class="row profile-row">
-        <div class="col-xs-2 profile-label">분류</div>
-        <div class="col-xs-10">{{ request.user.bunryu.name }}</div>
-    </div>
-    <div class="row profile-row">
-        <div class="col-xs-12 profile-label">자기소개</div>
-        <div class="col-xs-12 profile-bio">{{ request.user.pd_bio or "자기소개가 비어있습니다" }}</div>
-    </div>
-    <div class="row profile-row">
-        <div class="col-xs-12">
-            <a href="/profile/edit" class="btn btn-default">수정</a>
-        </div>
+    <table class="table table-hover">
+        <tr>
+            <th>ID</th>
+            <td>{{ request.user.username }}</td>
+        </tr>
+        <tr>
+            <th>별명</th>
+            <td>{{ request.user.nickname | e }}</td>
+        </tr>
+        <tr>
+            <th>실명</th>
+            <td>{{ request.user.pd_realname }}</td>
+        </tr>
+        <tr>
+            <th>이메일</th>
+            <td>{{ request.user.pd_email or "미입력" }}</td>
+        </tr>
+        <tr>
+            <th>주소</th>
+            <td>{{ request.user.pd_address or "미입력" }}</td>
+        </tr>
+        <tr>
+            <th>전화번호</th>
+            <td>{{ request.user.pd_phone or "미입력" }}</td>
+        </tr>
+        <tr>
+            <th>분류</th>
+            <td>{{ request.user.bunryu.name }}</td>
+        </tr>
+        <tr>
+            <th>자기소개</th>
+            <td>{{ request.user.pd_bio or "자기소개가 비어있습니다" }}</td>
+        </tr>
+    </table>
+    <div class="pull-right">
+        <a href="/profile/edit" class="btn btn-default">수정</a>
     </div>
 {% endblock %}

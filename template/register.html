@@ -1,83 +1,91 @@
 {% extends "base.html" %}
-{% block title %}
-    <title>{{ site_name }} - 가입신청</title>
-{% endblock %}
-{% block head %}
-    <link rel="stylesheet" href="/static/css/register.css"/>
+{% block subtitle %}
+    <h2>{{ site_name }} - 가입신청 <small>*표는 필수항목</small></h2>
 {% endblock %}
 {% block body %}
-    <div class="col-md-12">
-        <h1>가입신청</h1>
-        <span class="help-block">*표는 필수항목</span>
-
+    <div class="col-xs-8 col-xs-offset-2">
         {% if err %}
             <div class="alert alert-danger" role="alert">
                 ※ {{ err }}
             </div>
         {% endif %}
+        <form id="register-form" action="/register" method="post" class="form-horizontal">
+            <div class="form-group">
+                <label for="username" class="control-label col-xs-3">ID(*)</label>
+                <div class="col-xs-9">
+                    <input id="username" name="username" class="form-control" type="text" placeholder="로그인에 사용할 ID" required />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="nickname" class="control-label col-xs-3">별명(*)</label>
+                <div class="col-xs-9">
+                    <input id="nickname" name="nickname" class="form-control" type="text" placeholder="커뮤니티에서 사용할 별명" required />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password" class="control-label col-xs-3">비밀번호(*)</label>
+                <div class="col-xs-9">
+                    <input id="password" class="form-control" type="password" placeholder="비밀번호" pattern=".{8,}" title="비밀번호는 최소 8자리여야 합니다." required />
+                    <span class="help-block">※ 최소 8글자 이상</span>
+                    <input id="password-real" name="password" type="hidden"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="password-confirm" class="control-label col-xs-3">비밀번호 확인 (*)</label>
+                <div class="col-xs-8">
+                    <input id="password-confirm" class="form-control" type="password" placeholder="비밀번호 확인" title="입력했던 비밀번호와 같은 값을 입력하세요." />
+                </div>
+                <div class="col-xs-1">
+                    <span class="password-confirm-sign password-confirm-ok glyphicon glyphicon-ok"></span>
+                    <span class="password-confirm-sign password-confirm-no glyphicon glyphicon-remove"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="pd_realname" class="control-label col-xs-3">실명(*)</label>
+                <div class="col-xs-9">
+                    <input id="pd_realname" name="pd_realname" class="form-control" type="text" placeholder="현실에서 이름" required />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="pd_email" class="control-label col-xs-3">이메일</label>
+                <div class="col-xs-9">
+                    <input id="pd_email" name="pd_email" class="form-control" type="email" placeholder="이메일" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="pd_address" class="control-label col-xs-3">주소</label>
+                <div class="col-xs-9">
+                    <input id="pd_address" name="pd_address" class="form-control" type="text" placeholder="주소" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="pd_phone" class="control-label col-xs-3">전화번호</label>
+                <div class="col-xs-9">
+                    <input id="pd_phone" name="pd_phone" class="form-control" type="text" placeholder="전화번호" pattern="^\d{2,3}-\d{3,4}-\d{4}$" />
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="pd_bunryu" class="control-label col-xs-3">분류(*)</label>
+                <div class="col-xs-9">
+                    <select id="pd_bunryu" name="pd_bunryu" class="form-control" required>
+                        <option value="" selected="selected">선택하세요</option>
+                        {% for group in group_meta %}
+                            <option value="{{ group[0] }}">{{ group[1] }}</option>
+                        {% endfor %}
+                    </select>
+                </div>
+            </div>
+            <div class="form-group">
+                <label for="pd_bio" class="control-label col-xs-3">자기소개</label>
+                <div class="col-xs-9">
+                    <textarea id="pd_bio" name="pd_bio" class="form-control"></textarea>
+                </div>
+            </div>
+            <div class="form-group pull-right">
+                <button type="submit" class="btn btn-default">신청</button>
+            </div>
+        </form>
     </div>
-    <form id="register-form" action="/register" method="post">
-        <div class="form-group col-md-12">
-            <label for="username">ID(*)</label>
-            <input id="username" name="username" class="form-control" type="text" placeholder="로그인에 사용할 ID" required/>
-        </div>
-        <div class="form-group col-md-12">
-            <label for="nickname">별명(*)</label>
-            <input id="nickname" name="nickname" class="form-control" type="text" placeholder="커뮤니티에서 사용할 별명" required/>
-        </div>
-        <div class="form-group col-md-6">
-            <label for="password">비밀번호(*)</label>
-            <input id="password" class="form-control" type="password" placeholder="비밀번호" pattern=".{8,}"
-                   title="비밀번호는 최소 8자리여야 합니다."
-                   required/>
-            <span class="help-block">※ 최소 8글자 이상</span>
-            <input id="password-real" name="password" type="hidden"/>
-        </div>
-        <div class="form-group col-md-6">
-            <div class="col-md-11">
-                <label for="password-confirm">비밀번호 확인</label>
-                <input id="password-confirm" class="form-control" type="password"
-                       placeholder="비밀번호 확인" title="입력했던 비밀번호와 같은 값을 입력하세요."/>
-            </div>
-            <div class="col-md-1">
-                <span class="password-confirm-sign password-confirm-ok glyphicon glyphicon-ok"></span>
-                <span class="password-confirm-sign password-confirm-no glyphicon glyphicon-remove"></span>
-            </div>
-        </div>
-        <div class="form-group col-md-12">
-            <label for="pd_realname">실명(*)</label>
-            <input id="pd_realname" name="pd_realname" class="form-control" type="text" placeholder="현실에서 이름" required/>
-        </div>
-        <div class="form-group col-md-12">
-            <label for="pd_email">이메일</label>
-            <input id="pd_email" name="pd_email" class="form-control" type="email" placeholder="이메일"/>
-        </div>
-        <div class="form-group col-md-12">
-            <label for="pd_address">주소</label>
-            <input id="pd_address" name="pd_address" class="form-control" type="text" placeholder="주소"/>
-        </div>
-        <div class="form-group col-md-12">
-            <label for="pd_phone">전화번호</label>
-            <input id="pd_phone" name="pd_phone" class="form-control" type="text" placeholder="전화번호"
-                   pattern="^\d{2,3}-\d{3,4}-\d{4}$"/>
-        </div>
-        <div class="form-group col-md-12">
-            <label for="pd_bunryu">분류(*)</label>
-            <select id="pd_bunryu" name="pd_bunryu" class="form-control" required>
-                <option value="" selected="selected">선택하세요</option>
-                {% for group in group_meta %}
-                    <option value="{{ group[0] }}">{{ group[1] }}</option>
-                {% endfor %}
-            </select>
-        </div>
-        <div class="form-group col-md-12">
-            <label for="pd_bio">자기소개</label>
-            <textarea id="pd_bio" name="pd_bio" class="form-control"></textarea>
-        </div>
-        <div class="form-group col-md-12">
-            <button type="submit" class="btn btn-default">신청</button>
-        </div>
-    </form>
 {% endblock %}
 {% block script %}
     <script src="/static/js/sha256.js"></script>
