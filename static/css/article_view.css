@@ -1,73 +1,39 @@
-.article-subject {
-    padding: 10px 45px;
-}
-.meta {
-    padding: 10px 15px;
-    border-top: #ddd 1px solid;
-    border-bottom: #ddd 1px solid;
-    margin: 0;
+.reply-nickname {
+    width: 20%;
 }
 
-.meta strong {
-    color: #999;
+.reply-content-box {
+    width: 50%;
 }
 
-.content {
-    padding: 20px 30px;
+.reply-timestamp {
+    width: 30%;
 }
 
-.buttons {
-    padding-top: 20px;
-    padding-bottom: 20px;
+@media (min-width: 768px) {
+    .reply-nickname {
+        width: 20%;
+    }
+
+    .reply-content-box {
+        width: 50%;
+    }
+
+    .reply-timestamp {
+        width: 30%;
+    }
 }
 
-#article-delete {
-    margin-left: 30px;
-}
+@media (min-width: 992px) {
+    .reply-nickname {
+        width: 20%;
+    }
 
-#reply-table {
-    font-size: 10pt;
-    padding: 0;
-}
+    .reply-content-box {
+        width: 55%;
+    }
 
-.outer-wrap {
-    float: left;
-    position: relative;
-    left: 50%;
-    padding-top: 10px;
-}
-
-#pagination {
-    float: left;
-    left: -50%;
-    position: relative;
-}
-
-.clear {
-    clear: both;
-}
-
-.reply-row {
-    border-top: 1px solid #ddd;
-    padding: 12px 15px;
-}
-
-.reply-row > div {
-    display: inline-block;
-    float: none;
-    vertical-align: middle;
-}
-
-form .reply-content-box {
-    margin-left: -18px;
-    margin-right: 8px;
-    padding-right: 0;
-}
-
-.reply-row > div.reply-content-box {
-    width: 66%;
-}
-
-.reply-delete {
-    margin-left: 10px;
+    .reply-timestamp {
+        width: 25%;
+    }
 }
