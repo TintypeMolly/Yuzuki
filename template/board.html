@@ -1,91 +1,96 @@
 {% extends "base.html" %}
 {% block head %}
-    <link rel="stylesheet" href="/static/css/board.css"/>
+    <link rel="stylesheet" href="/static/css/board.css">
+{% endblock %}
+{% block subtitle %}
+    <h2>{{ board.repr }}</h2>
 {% endblock %}
 {% block body %}
-    <div class="row">
+    {% if items %}
         <div class="col-xs-12">
-            <h1>
-                {% block board_header %}
-                    {{ board.repr }}
-                {% endblock %}
-            </h1>
-        </div>
-        {% if items %}
-            <div class="col-xs-12">
-                <table class="table">
-                    <thead>
-                    <tr>
-                        {% block caption %}
-                            <th class="subject">제목</th>
-                            <th class="author">작성자</th>
-                            <th class="timestamp">작성시간</th>
-                        {% endblock %}
-                    </tr>
-                    </thead>
-                    <tbody>
-                    {% block board_content %}
-                        {% for article in items %}
-                            <tr>
-                                <td class="subject">
-                                    {% if article.reply_count %}
-                                        <a href="/article/view?id={{ article.uid }}&page={{ page }}">{{ article.subject | e }}
-                                            [{{ article.reply_count }}]</a>
-                                    {% else %}
-                                        <a href="/article/view?id={{ article.uid }}&page={{ page }}">{{ article.subject | e }}</a>
-                                    {% endif %}
-                                </td>
-                                <td class="author">{{ article.user.nickname | e }}</td>
-                                <td class="timestamp">{{ article.created_at.strftime("%y-%m-%d %H:%M:%S") }}</td>
-                            </tr>
-                        {% endfor %}
+            <table class="table table-hover table-condensed">
+                <thead>
+                <tr>
+                    {% block caption %}
+                        <th class="subject">제목</th>
+                        <th class="author">작성자</th>
+                        <th class="timestamp">작성시간</th>
                     {% endblock %}
-                    </tbody>
-                </table>
-                {% block write_button %}
-                    <div class="col-xs-12">
-                        {% if can_write %}
-                            <a href="/article/write?name={{ board.name }}" class="btn btn-default pull-right">글쓰기</a>
-                        {% endif %}
-                    </div>
+                </tr>
+                </thead>
+                <tbody>
+                {% block board_content %}
+                    {% for article in items %}
+                        <tr>
+                            <td class="subject">
+                                {% if article.reply_count %}
+                                    <a href="/article/view?id={{ article.uid }}&page={{ page }}">{{ article.subject | e }}
+                                        [{{ article.reply_count }}]</a>
+                                {% else %}
+                                    <a href="/article/view?id={{ article.uid }}&page={{ page }}">{{ article.subject | e }}</a>
+                                {% endif %}
+                            </td>
+                            <td class="author">{{ article.user.nickname | e }}</td>
+                            <td class="timestamp">{{ article.created_at.strftime("%y-%m-%d %H:%M:%S") }}</td>
+                        </tr>
+                    {% endfor %}
                 {% endblock %}
-                <div class="outer-wrap">
-                    <div id="pagination"></div>
-
-                </div>
-                <div class="clear"></div>
-                {% block search_box %}
-                    <div class="outer-wrap">
-                        <div class="search-form form-inline">
-                            <form action="/search" method="get">
-                                <input type="hidden" name="board" value="{{ board.name }}">
-                                <select name="target" class="form-control">
-                                    <option value="article">글</option>
-                                    <option value="reply">댓글</option>
-                                </select>
-                                <select name="type" class="form-control">
-                                    <option value="content">제목 + 내용</option>
-                                    <option value="user">작성자</option>
-                                </select>
-                                <input class="form-control" name="query" type="text" required/>
-                                <input class="btn btn-default" type="submit" value="검색"/>
-                            </form>
-                        </div>
-                    </div>
-                    <div class="clear"></div>
-                {% endblock %}
-            </div>
-        {% else %}
-            {% block no_result %}
-                <div class="col-xs-12 alert alert-warning"><strong>이런!</strong> 이 페이지에는 아무 글도 없습니다.</div>
+                </tbody>
+            </table>
+            {% block write_button %}
                 <div class="col-xs-12">
                     {% if can_write %}
                         <a href="/article/write?name={{ board.name }}" class="btn btn-default pull-right">글쓰기</a>
                     {% endif %}
                 </div>
             {% endblock %}
-        {% endif %}
-    </div>
+            <div class="outer-wrap">
+                <div id="pagination" class="inner-wrap"></div>
+            </div>
+            <div class="clear"></div>
+            {% block search_box %}
+                <div class="outer-wrap">
+                    <form action="/search" method="get" class="form-inline inner-wrap">
+                        <div class="form-group">
+                            <input type="hidden" name="board" value="{{ board.name }}">
+                        </div>
+                        <div class="form-group">
+                            <select name="target" class="form-control">
+                                <option value="article">글</option>
+                                <option value="reply">댓글</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <select name="type" class="form-control">
+                                <option value="content">제목 + 내용</option>
+                                <option value="user">작성자</option>
+                            </select>
+                        </div>
+                        <div class="form-group">
+                            <input class="form-control" name="query" type="text" required/>
+                        </div>
+                        <div class="form-group">
+                            <input class="btn btn-default" type="submit" value="검색"/>
+                        </div>
+                    </form>
+                </div>
+                <div class="clear"></div>
+            {% endblock %}
+        </div>
+    {% else %}
+        {% block no_result %}
+            <div class="col-xs-12 alert alert-warning">
+                <p>
+                    <strong>이런!</strong> 이 페이지에는 아무 글도 없습니다.
+                </p>
+            </div>
+            <div class="col-xs-12">
+                {% if can_write %}
+                    <a href="/article/write?name={{ board.name }}" class="btn btn-default pull-right">글쓰기</a>
+                {% endif %}
+            </div>
+        {% endblock %}
+    {% endif %}
 {% endblock %}
 {% block script %}
     <script src="/static/js/jquery.bootpag.js"></script>

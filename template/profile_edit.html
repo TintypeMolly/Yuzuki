@@ -1,116 +1,91 @@
 {% extends "base.html" %}
-{% block head %}
-    <style>
-        .profile-caption {
-            margin-bottom: 20px;
-        }
-
-        .profile-row {
-            margin-top: 20px;
-        }
-
-        .profile-row > div {
-            display: inline-block;
-            vertical-align: middle;
-            float: none;
-            font-size: 13pt;
-        }
-
-        .profile-label {
-            font-weight: bold;
-        }
-
-        .profile-bio {
-            margin-top: 20px;
-            min-height: 100px;
-        }
-
-        .password-confirm-ok {
-            color: #0f0;
-        }
-
-        .password-confirm-no {
-            color: #f00;
-        }
-    </style>
+{% block subtitle %}
+    <h2>개인정보 <small>※ 입력하지 않은 항목은 바뀌지 않습니다</small></h2>
 {% endblock %}
 {% block body %}
-    <div class="row profile-caption">
-        <div class="col-xs-12">
-            <h1>내 정보</h1>
-            <span class="help-block">※ 입력하지 않은 항목은 바뀌지 않습니다</span>
-            {% if err %}
-                <div class="alert alert-danger" role="alert">
-                    ※ {{ err }}
+    <div class="col-xs-8 col-xs-offset-2">
+        <span class="help-block">※ 입력하지 않은 항목은 바뀌지 않습니다</span>
+        {% if err %}
+            <div class="alert alert-danger" role="alert">
+                ※ {{ err }}
+            </div>
+        {% endif %}
+        <form id="edit-form" method="post" class="form-horizontal">
+            <div class="form-group">
+                <label class="col-xs-2 control-label">ID</label>
+                <div class="col-xs-3 control-label">{{ request.user.username | e}}</div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">별명</label>
+                <div class="col-xs-3 control-label">{{ request.user.nickname | e }}</div>
+                <div class="col-xs-7">
+                    <input name="nickname" type="text" class="form-control"/>
                 </div>
-            {% endif %}
-        </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">비밀번호</label>
+                <div class="col-xs-3 control-label">&#42;&#42;&#42;&#42;&#42;</div>
+                <div class="col-xs-7">
+                    <input id="password-real" type="hidden" name="password"/>
+                    <input id="password" type="password" class="form-control" pattern=".{8,}" title="비밀번호는 최소 8자리여야 합니다."/>
+                </div>
+            </div>
+            <div class="form-group">
+                <div class="col-xs-2"></div>
+                <div class="col-xs-3 control-label"></div>
+                <div class="col-xs-6">
+                    <input id="password-confirm" type="password" class="form-control" title="입력했던 비밀번호와 같은 값을 입력하세요."/>
+                </div>
+                <div class="col-xs-1">
+                    <span class="password-confirm-sign password-confirm-ok glyphicon glyphicon-ok"></span>
+                    <span class="password-confirm-sign password-confirm-no glyphicon glyphicon-remove"></span>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">실명</label>
+                <div class="col-xs-3 control-label">{{ request.user.pd_realname }}</div>
+                <div class="col-xs-7">
+                    <input name="pd_realname" type="text" class="form-control"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">이메일</label>
+                <div class="col-xs-3 control-label">{{ request.user.pd_email or "미입력" }}</div>
+                <div class="col-xs-7">
+                    <input name="pd_email" type="email" class="form-control"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">주소</label>
+                <div class="col-xs-3 control-label">{{ request.user.pd_address or "미입력" }}</div>
+                <div class="col-xs-7">
+                    <input name="pd_address" type="text" class="form-control"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">전화번호</label>
+                <div class="col-xs-3 control-label">{{ request.user.pd_phone or "미입력" }}</div>
+                <div class="col-xs-7">
+                    <input name="pd_phone" type="text" class="form-control"/>
+                </div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">분류</label>
+                <div class="col-xs-3 control-label">{{ request.user.bunryu.name }}</div>
+            </div>
+            <div class="form-group">
+                <label class="col-xs-2 control-label">자기소개</label>
+                <div class="col-xs-10">
+                    <textarea name="pd_bio" class="form-control" rows="5"></textarea>
+                </div>
+            </div>
+            <div class="form-group pull-right">
+                <div class="col-xs-12">
+                    <button type="submit" class="btn btn-default">완료</button>
+                </div>
+            </div>
+        </form>
     </div>
-    <form id="edit-form" method="post">
-        <div class="row profile-row">
-            <div class="col-xs-2 profile-label">ID</div>
-            <div class="col-xs-3">{{ request.user.username | e}}</div>
-        </div>
-        <div class="row profile-row">
-            <div class="col-xs-2 profile-label">별명</div>
-            <div class="col-xs-3">{{ request.user.nickname | e }}</div>
-            <div class="col-xs-3"><input name="nickname" type="text" class="form-control"/></div>
-        </div>
-        <div class="row profile-row">
-            <div class="col-xs-2 profile-label">비밀번호</div>
-            <div class="col-xs-3">&#42;&#42;&#42;&#42;&#42;</div>
-            <div class="col-xs-3">
-                <input id="password-real" type="hidden" name="password"/>
-                <input id="password" type="password" class="form-control" pattern=".{8,}" title="비밀번호는 최소 8자리여야 합니다."/>
-            </div>
-        </div>
-        <div class="row profile-row">
-            <div class="col-xs-2"></div>
-            <div class="col-xs-3"></div>
-            <div class="col-xs-3">
-                <input id="password-confirm" type="password" class="form-control" title="입력했던 비밀번호와 같은 값을 입력하세요."/>
-            </div>
-            <div class="col-md-1">
-                <span class="password-confirm-sign password-confirm-ok glyphicon glyphicon-ok"></span>
-                <span class="password-confirm-sign password-confirm-no glyphicon glyphicon-remove"></span>
-            </div>
-        </div>
-        <div class="row profile-row">
-            <div class="col-xs-2 profile-label">실명</div>
-            <div class="col-xs-3">{{ request.user.pd_realname }}</div>
-            <div class="col-xs-3"><input name="pd_realname" type="text" class="form-control"/></div>
-        </div>
-        <div class="row profile-row">
-            <div class="col-xs-2 profile-label">이메일</div>
-            <div class="col-xs-3">{{ request.user.pd_email or "미입력" }}</div>
-            <div class="col-xs-3"><input name="pd_email" type="email" class="form-control"/></div>
-        </div>
-        <div class="row profile-row">
-            <div class="col-xs-2 profile-label">주소</div>
-            <div class="col-xs-3">{{ request.user.pd_address or "미입력" }}</div>
-            <div class="col-xs-3"><input name="pd_address" type="text" class="form-control"/></div>
-        </div>
-        <div class="row profile-row">
-            <div class="col-xs-2 profile-label">전화번호</div>
-            <div class="col-xs-3">{{ request.user.pd_phone or "미입력" }}</div>
-            <div class="col-xs-3"><input name="pd_phone" type="text" class="form-control"/></div>
-        </div>
-        <div class="row profile-row">
-            <div class="col-xs-2 profile-label">분류</div>
-            <div class="col-xs-3">{{ request.user.bunryu.name }}</div>
-        </div>
-        <div class="row profile-row">
-            <div class="col-xs-12 profile-label">자기소개</div>
-            <div class="col-xs-12 profile-bio">
-                <textarea name="pd_bio" class="form-control" rows="5"></textarea>
-            </div>
-        </div>
-        <div class="row profile-row">
-            <div class="col-xs-12">
-                <input type="submit" class="btn btn-default" value="완료"/>
-            </div>
-        </div>
-    </form>
 {% endblock %}
 {% block script %}
     <script src="/static/js/sha256.js"></script>

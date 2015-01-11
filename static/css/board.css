@@ -12,6 +12,20 @@
 
 @media (min-width: 768px) {
     .subject {
+        width: 55%;
+    }
+
+    .author {
+        width: 20%;
+    }
+
+    .timestamp {
+        width: 25%;
+    }
+}
+
+@media (min-width: 992px) {
+    .subject {
         width: 60%;
     }
 
@@ -22,27 +36,4 @@
     .timestamp {
         width: 20%;
     }
-}
-
-.outer-wrap {
-    float: left;
-    position: relative;
-    left: 50%;
-    padding-top: 10px;
-}
-
-#pagination {
-    float: left;
-    left: -50%;
-    position: relative;
-}
-
-.search-form {
-    float: left;
-    left: -50%;
-    position: relative;
-}
-
-.clear {
-    clear: both;
 }

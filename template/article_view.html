@@ -1,84 +1,79 @@
 {% extends "base.html" %}
 {% block head %}
-    <link rel="stylesheet" href="/static/css/article_view.css"/>
+    <link rel="stylesheet" href="/static/css/article_view.css">
+{% endblock %}
+{% block subtitle %}
+    <h2>{{ article.board.repr }}</h2>
 {% endblock %}
 {% block body %}
-    <div class="row">
-        <div class="col-xs-12">
-            <h1>{{ article.board.repr }}</h1>
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h3 class="panel-title">{{ article.subject | e }}</h3>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-12 article-subject">
-            <h2>{{ article.subject | e }}</h2>
+        <div class="panel-heading col-xs-12">
+            <div class="col-xs-4">
+                <strong>글쓴이</strong> {{ article.user.nickname | e }}
+            </div>
+            <div class="col-xs-4">
+                <strong>작성시간</strong> {{ article.created_at.strftime("%y-%m-%d %H:%M:%S") }}
+            </div>
+            <div class="col-xs-4">
+                {% if article.is_modified %}
+                    <strong>변경시간</strong> {{ article.last_modified.strftime("%y-%m-%d %H:%M:%S") }}
+                {% endif %}
+            </div>
         </div>
-    </div>
-    <div class="row">
-        <div class="col-xs-12">
-            <div class="meta row">
-                <div class="col-xs-2">
-                    <strong>글쓴이</strong> {{ article.user.nickname | e }}
-                </div>
-                <div class="col-xs-4">
-                    <strong>작성시간</strong> {{ article.created_at.strftime("%y-%m-%d %H:%M:%S") }}
-                </div>
-                <div class="col-xs-4">
-                    {% if article.is_modified %}
-                        <strong>변경시간</strong> {{ article.last_modified.strftime("%y-%m-%d %H:%M:%S") }}
-                    {% endif %}
-                </div>
+        <div class="panel-body">
+            <div class="well-lg">
+                {{ article.compiled_content }}
             </div>
         </div>
     </div>
-    <div class="row content">
-        <div class="col-xs-12">
-            {{ article.compiled_content }}
-        </div>
-    </div>
-    <div class="row replies">
+    
     <div class="col-xs-12">
-        <div id="reply-wrap">
-            <div id="reply-table" class="col-xs-12"></div>
-            {% if request.user and request.user in article.board.comment_group.users %}
-                <form method="post" action="/reply/write" class="col-xs-12 reply-row">
-                    <input type="hidden" name="article_id" value="{{ article.uid }}"/>
-
-                    <div class="reply-nickname col-xs-2">
-                        <label class="current-user-nickname"
-                               for="reply-input">{{ request.user.nickname | e }}</label>
-                    </div>
-                    <div class="reply-content-box col-xs-8">
+        <table class="table table-condensed table-hover">
+            <thead></thead>
+            <tbody id="reply-table"></tbody>
+        </table>
+        {% if request.user and request.user in article.board.comment_group.users %}
+            <form method="post" action="/reply/write" class="form-horizontal reply-row">
+                <div class="form-group">
+                    <input type="hidden" name="article_id" value="{{ article.uid }}" />
+                </div>
+        
+                <div class="form-group">
+                    <label class="current-user-nickname col-xs-2 control-label" for="reply-input">{{ request.user.nickname | e }}</label>
+                    <div class="col-xs-8">
                         <input id="reply-input" type="text" name="content" class="form-control" required=""/>
                     </div>
-                    <div class="reply-timestamp col-xs-2">
-                        {% if page %}
-                            <input type="hidden" name="page" value="{{ page }}"/>
-                        {% endif %}
-                        <input type="submit" value="완료" class="btn btn-default"/>
+                    {% if page %}
+                        <input type="hidden" name="page" value="{{ page }}"/>
+                    {% endif %}
+                    <div class="col-xs-2">
+                        <button type="submit" class="btn btn-default form-control">입력</button>
                     </div>
-                </form>
-            {% endif %}
-            </tfoot>
-            </table>
-        </div>
-
-        <div class="outer-wrap">
-            <div id="pagination"></div>
-            <div class="clear"></div>
-        </div>
+                </div>
+            </form>
+        {% endif %}
     </div>
-    <div class="row buttons">
-        <div class="col-xs-12">
-            {% if page %}
-                <a class="btn btn-default pull-left" href="/board?name={{ article.board.name }}&page={{ page }}">목차</a>
-            {% else %}
-                <a class="btn btn-default pull-left" href="/board?name={{ article.board.name }}">목차</a>
-            {% endif %}
-            {% if request.user == article.user or request.user.is_admin %}
-                <span id="article-delete" class="btn btn-default pull-right">삭제</span>
-                <a href="/article/edit?id={{ article.uid }}" id="article-edit" class="btn btn-default pull-right">수정</a>
-            {% endif %}
-        </div>
+    
+    <div class="outer-wrap">
+        <div id="pagination" class="inner-wrap"></div>
+    </div>
+    <div class="clear"></div>
+    
+    <div class="col-xs-12">
+        {% if page %}
+            <a class="btn btn-default pull-left" href="/board?name={{ article.board.name }}&page={{ page }}">목차</a>
+        {% else %}
+            <a class="btn btn-default pull-left" href="/board?name={{ article.board.name }}">목차</a>
+        {% endif %}
+        {% if request.user == article.user or request.user.is_admin %}
+            <div class="pull-right">
+                <a href="/article/edit?id={{ article.uid }}" id="article-edit" class="btn btn-default">수정</a>
+                <span id="article-delete" class="btn btn-default">삭제</span>
+            </div>
+        {% endif %}
     </div>
 {% endblock %}
 {% block script %}
@@ -112,16 +107,20 @@
 
         var current_page = 1;
         var render_reply = function (reply) {
-            var reply_el = $("<div></div>").attr("id", reply.uid).addClass("reply-row");
-            var nickname = $("<div></div>").addClass("reply-nickname").addClass("col-xs-2").text(reply.user_nickname);
-            var content = $("<div></div>").addClass("reply-content-box").addClass("col-xs-8").append("<span class=reply-content>" + reply.content + "</span>");
+            var reply_el = $("<tr></tr>").attr("id", reply.uid).addClass("reply-row");
+            var nickname = $("<td></td>").addClass("reply-nickname").text(reply.user_nickname);
+            var content = $("<td></td>").addClass("reply-content-box").append("<span class=reply-content>" + reply.content + "</span>");
             {% if request.user and request.user.is_admin %}
-                content.append("<span class=\"reply-delete glyphicon glyphicon-remove pull-right\"></span>");
-                content.append("<span class=\"reply-edit glyphicon glyphicon-pencil pull-right\"></span>");
+                var actions = $("<div class=\"pull-right\"></div>");
+                actions.append("<span class=\"reply-delete glyphicon glyphicon-remove\"></span>");
+                actions.append("<span class=\"reply-edit glyphicon glyphicon-pencil\"></span>");
+                content.append(actions);
             {% elif request.user %}
                 if (reply.user_id == {{ request.user.uid }}) {
-                    content.append("<span class=\"reply-delete glyphicon glyphicon-remove pull-right\"></span>");
-                    content.append("<span class=\"reply-edit glyphicon glyphicon-pencil pull-right\"></span>");
+                    var actions = $("<div class=\"pull-right\"></div>");
+                    actions.append("<span class=\"reply-delete glyphicon glyphicon-remove\"></span>");
+                    actions.append("<span class=\"reply-edit glyphicon glyphicon-pencil\"></span>");
+                    content.append(actions);
                 }
             {% endif %}
             var time_repr = null;
@@ -130,7 +129,7 @@
             } else {
                 time_repr = reply.created_at
             }
-            var timestamp = $("<div></div>").addClass("reply-timestamp").addClass("col-xs-2").text(time_repr);
+            var timestamp = $("<td></td>").addClass("reply-timestamp").text(time_repr);
             reply_el.append(nickname).append(content).append(timestamp);
             return reply_el;
         };
@@ -144,7 +143,7 @@
             $(".reply-delete").click(function () {
                 var delete_ok = confirm("댓글을 정말로 삭제하시겠습니까?");
                 if (delete_ok) {
-                    var reply_uid = $(this).parent().parent().attr("id");
+                    var reply_uid = $(this).parent().parent().parent().attr("id");
                     $.ajax("/reply/delete?id=" + reply_uid, {
                         type: "DELETE"
                     }).done(function () {
@@ -172,7 +171,7 @@
                         refresh_table_with_page(current_page);
                         var $this = $(this);
                         var reply_data = {
-                            id: $this.parent().parent().attr("id"),
+                            id: $this.parent().parent().parent().attr("id"),
                             content: $this.val()
                         };
                         $.ajax("/reply/edit", {

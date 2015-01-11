@@ -1,34 +1,24 @@
 {% extends "base.html" %}
-{% block head %}
-    <style>
-        .board-repr {
-            padding-left: 3px;
-            border: 1px solid transparent;
-            box-shadow: none;
-        }
-    </style>
+{% block subtitle %}
+    <h2>{{ article.board.repr }}</h2>
 {% endblock %}
 {% block body %}
-    <div class="row">
-        <form method="post">
-            <div class="form-group">
-                <label for="board">게시판</label>
-
-                <div class="form-control board-repr" id="board">{{ article.board.repr }}</div>
-                <input name="id" type="hidden" value="{{ article.uid }}"/>
-            </div>
-            <div class="form-group">
-                <label for="subject">제목</label>
-                <input name="subject" type="text" class="form-control" id="subject" placeholder="제목"
-                       value="{{ article.subject | e }}" required/>
-            </div>
-            <div class="form-group">
-                <label for="exampleInputPassword1">내용</label>
-                <textarea name="content" class="form-control" rows="20" required>{{ article.content }}</textarea>
-            </div>
-            <input type="submit" class="btn btn-default" value="완료"/>
-        </form>
-    </div>
+    <form method="post">
+        <div class="form-group">
+            <input name="id" type="hidden" value="{{ article.uid }}"/>
+        </div>
+        <div class="form-group">
+            <label for="subject">제목</label>
+            <input name="subject" type="text" class="form-control" id="subject" placeholder="제목" value="{{ article.subject | e }}" required/>
+        </div>
+        <div class="form-group">
+            <label for="exampleInputPassword1">내용</label>
+            <textarea name="content" class="form-control" rows="20" required>{{ article.content }}</textarea>
+        </div>
+        <div class="form-group pull-right">
+            <button type="submit" class="btn btn-default">완료</button>
+        </div>
+    </form>
 {% endblock %}
 {% block script %}
     <script>
