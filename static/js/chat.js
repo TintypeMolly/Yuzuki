@@ -3,9 +3,49 @@ var chat_input = $("#chat-input");
 var message_ul = $("#chat-message-ul");
 var latest_uid = 1;
 
-var chat_input_handler = {
+var KEY_CODES = {
+    UP_ARROW: 38,
+    DOWN_ARROW: 40
+};
+
+var chat_histories = {
+    init: function (params) {
+        params = params || {};
+        this.max_size = params["max_size"] || 20;
+        this.histories = [];
+        this.cursor_index = -1;
+        return this;
+    },
+    size: function () {
+        return this.histories.length;
+    },
+    add: function (history) {
+        this.histories.unshift(history);
+        if (this.histories.length > this.max_size) {
+            this.histories.pop();
+        }
+    },
+    next: function () {
+        this.cursor_index = (this.cursor_index + 1) % this.size();
+        return this.histories[this.cursor_index];
+    },
+    prev: function () {
+        if (this.cursor_index === -1) {
+            this.cursor_index = 0;
+        }
+        this.cursor_index = (this.cursor_index + this.size() - 1) % this.size();
+        return this.histories[this.cursor_index];
+    },
+    reset: function () {
+        this.cursor_index = -1;
+    }
+};
+
+var chat_input_box = {
     init: function (params) {
         this.chat_input = $("#chat-input");
+        this.chat_histories = chat_histories.init();
+
         var mentionable_users = params["mentionable_users"] || [];
         mentionable_users.unshift("전체");
 
@@ -23,6 +63,16 @@ var chat_input_handler = {
                 index: 1
             }
         ]);
+
+        this.chat_input.on("keydown", $.proxy(this.on_keydown, this));
+    },
+    on_keydown: function (e) {
+        if (e.keyCode === KEY_CODES["UP_ARROW"]) {
+            this.set_text(this.chat_histories.next());
+        }
+        else if (e.keyCode === KEY_CODES["DOWN_ARROW"]) {
+            this.set_text(this.chat_histories.prev());
+        }
     },
     display_chat_input: function (show) {
         var chat_input_with_submit = this.chat_input.parent();
@@ -32,9 +82,20 @@ var chat_input_handler = {
             chat_input_with_submit.hide();
         }
     },
+    get_text: function () {
+        return this.chat_input.val();
+    },
+    set_text: function (text) {
+        this.chat_input.val(text)
+    },
+    finalize: function () {
+        this.chat_histories.add(this.get_text());
+        this.chat_histories.reset();
+        this.set_text("");
+    }
 };
 
-var chat_pagination_handler = {
+var chat_pagination = {
     init: function (params) {
         this.page_total = params["page_total"] || 1;
         this.current_page = params["current_page"] || 1;
@@ -65,7 +126,7 @@ var chat_pagination_handler = {
     },
     change_page: function (page) {
         this.current_page = page;
-        chat_input_handler.display_chat_input(page === 1);
+        chat_input_box.display_chat_input(page === 1);
     }
 };
 
@@ -73,7 +134,7 @@ $("#chat-form").submit(function (e) {
     if (!submit_lock) {
         submit_lock = true;
         $.post("/chat/message/stream", $(this).serialize()).done(function () {
-            chat_input.val("");
+            chat_input_box.finalize();
             submit_lock = false;
         }).fail(function (xhr) {
             var template = '<li class="chat-item row" class="chat-system"><div class="chat-item-user-nickname col-xs-2">system</div><div class="chat-content-datetime col-xs-10"><span class="chat-content">{{content}}</span><span class="chat-datetime">{{created_at}}</div></li>';
@@ -153,7 +214,7 @@ var process_chat_items = function (data, enable_noti) {
 };
 
 var get_newer_chat = function (enable_noti) {
-    if (chat_pagination_handler.current_page != 1) {
+    if (chat_pagination.current_page != 1) {
         return;
     }
 

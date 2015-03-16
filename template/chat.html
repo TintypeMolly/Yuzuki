@@ -64,10 +64,10 @@
     <script src="/static/js/markup.min.js"></script>
     <script src="/static/js/chat.js"></script>
     <script>
-    chat_input_handler.init({
+    chat_input_box.init({
         mentionable_users: {{ user_nicknames }}
     });
-    chat_pagination_handler.init({
+    chat_pagination.init({
         page_total: {{ page_total }},
         current_page: {{ page if page else 1 }},
         max_visible: 10,
