@@ -59,21 +59,18 @@
     <script src="/static/js/jquery.textcomplete.min.js"></script>
     <script>
         prompted_error = false;
-        chat_per_page = {{ CHAT_PER_PAGE }};
     </script>
     <script src="/static/js/markup.min.js"></script>
     <script src="/static/js/chat.js"></script>
     <script>
-    chat_input_handler.init({
-        mentionable_users: {{ user_nicknames }}
-    });
-    chat_pagination_handler.init({
+    chat_app.init({
+        mentionable_users: {{ user_nicknames }},
         page_total: {{ page_total }},
         current_page: {{ page if page else 1 }},
         max_visible: 10,
-        leaps: false
+        leaps: false,
+        chat_per_page: {{ CHAT_PER_PAGE }},
     });
-    wait_for_chat_stream();
     </script>
     <script src="/static/js/chatuser.js"></script>
 {% endblock %}
