@@ -56,5 +56,8 @@ def pack_article(article):
     item["type"] = u"글"
     item["content"] = escape(article.subject)
     item["user"] = article.user
-    item["created_at"] = article.created_at
+    if article.is_modified is True:
+        item["created_at"] = article.last_modified
+    else:
+        item["created_at"] = article.created_at
     return item
