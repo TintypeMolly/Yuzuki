@@ -18,7 +18,8 @@ class Reply(Base):
     content = Column(Text())
     enabled = Column(Boolean, default=True)
     is_modified = Column(Boolean, default=False, onupdate=True)
-    last_modified = Column(DateTime, onupdate=datetime.now, default=datetime.now)
+    last_modified = Column(DateTime, onupdate=datetime.now,
+                           default=datetime.now)
     created_at = Column(DateTime, default=datetime.now)
     deleted_at = Column(DateTime)
     deleted_user_id = Column(Integer(), ForeignKey("user.uid"))
