@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# flake8: noqa
 from logging.config import fileConfig
 
 ARTICLE_PER_PAGE = 15

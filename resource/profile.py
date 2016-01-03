@@ -48,7 +48,8 @@ class ProfileEdit(YuzukiResource):
         # error check
         err = None
         if nickname:
-            query = request.dbsession.query(User).filter(User.nickname == nickname)
+            query = request.dbsession.query(User)\
+                                     .filter(User.nickname == nickname)
             if request.dbsession.query(query.exists()).scalar():
                 err = u"이미 사용되고 있는 별명입니다."
             elif not re.match(u"^[-_a-zA-Z가-힣\\d\\(\\)]{1,}$", nickname):

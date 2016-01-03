@@ -15,16 +15,24 @@ NEW_ITEM_COUNT = ARTICLE_PER_PAGE * NEW_ITEM_PAGE_TOTAL
 class New(YuzukiResource):
     @need_anybody_permission
     def render_GET(self, request):
-        articles = request.dbsession.query(Article).filter(Article.enabled).order_by(Article.uid.desc()).options(
-            subqueryload(Article.user))[0:NEW_ITEM_COUNT]
-        replies = request.dbsession.query(Reply).filter(Reply.enabled).order_by(Reply.uid.desc()).options(
-            subqueryload(Reply.user))[0:NEW_ITEM_COUNT]
+        articles = request.dbsession\
+                          .query(Article)\
+                          .filter(Article.enabled)\
+                          .order_by(Article.uid.desc())\
+                          .options(
+                              subqueryload(Article.user))[0:NEW_ITEM_COUNT]
+        replies = request.dbsession\
+                         .query(Reply)\
+                         .filter(Reply.enabled)\
+                         .order_by(Reply.uid.desc())\
+                         .options(subqueryload(Reply.user))[0:NEW_ITEM_COUNT]
         articles_packed = [pack_article(article) for article in articles]
         replies_packed = [pack_reply(reply) for reply in replies]
         items = list()
         items.extend(articles_packed)
         items.extend(replies_packed)
-        items = sorted(items, key=lambda i: i["created_at"], reverse=True)[0:NEW_ITEM_COUNT]
+        items = sorted(items, key=lambda i: i["created_at"],
+                       reverse=True)[0:NEW_ITEM_COUNT]
         page = request.get_argument_int("page", 1)
         page_total = len(items) / ARTICLE_PER_PAGE
         if len(items) % ARTICLE_PER_PAGE != 0:

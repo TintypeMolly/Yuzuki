@@ -2,6 +2,7 @@ static/spec/
 config/
 log/
 env/
+page/
 .idea/
 *.pyc
 *.db

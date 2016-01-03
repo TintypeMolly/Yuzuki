@@ -20,7 +20,8 @@ class YuzukiSession(Session):
 
     def redis_sync(self):
         if USE_REDIS:
-            r.setex(get_redis_id(self.uid), self.sessionTimeout, json.dumps(self.yuzuki_session_data))
+            r.setex(get_redis_id(self.uid), self.sessionTimeout,
+                    json.dumps(self.yuzuki_session_data))
 
 
 class YuzukiSite(Site):
@@ -33,7 +34,8 @@ class YuzukiSite(Site):
         if USE_REDIS:
             uid = self._mkuid()
             session = self.sessions[uid] = self.sessionFactory(self, uid)
-            r.setex(get_redis_id(uid), YuzukiSession.sessionTimeout, json.dumps(dict()))
+            r.setex(get_redis_id(uid), YuzukiSession.sessionTimeout,
+                    json.dumps(dict()))
             return session
         else:
             return Site.makeSession(self)
@@ -46,7 +48,8 @@ class YuzukiSite(Site):
                 if uid in self.sessions:
                     session = self.sessions[uid]
                 else:
-                    session = self.sessions[uid] = self.sessionFactory(self, uid)
+                    session = self.sessions[uid] = self.sessionFactory(self,
+                                                                       uid)
                 session.yuzuki_session_data = json.loads(redis_session)
                 return session
             else:

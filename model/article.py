@@ -2,7 +2,8 @@
 from datetime import datetime
 
 
-from sqlalchemy import Boolean, Column, Integer, String, Text, ForeignKey, DateTime
+from sqlalchemy import Boolean, Column, Integer, String, Text, ForeignKey,\
+    DateTime
 from sqlalchemy.orm import relationship
 
 from helper.content import markdown_and_linkify

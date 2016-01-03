@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# flake8: noqa
 """
 Python PKCS#5 v2.0 PBKDF2 Module
 --------------------------------

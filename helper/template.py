@@ -23,7 +23,7 @@ def get_template(name, parent=None, glob=None):
 
 
 def render_template(name, request, context=None):
-    if context == None:
+    if context is None:
         context = dict()
 
     context["side_menu"] = SIDE_MENU

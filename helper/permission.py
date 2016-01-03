@@ -1,6 +1,7 @@
 # -*- coding: utf-8 -*-
 def is_anybody(request):
-    return request.user and any([group.name == "anybody" for group in request.user.groups])
+    return request.user and any([group.name == "anybody"
+                                 for group in request.user.groups])
 
 
 def is_admin(request):

@@ -3,20 +3,25 @@ import re
 
 from config.config import REPLY_PER_PAGE
 from exception import BadRequest, Unauthorized
-from helper.model_control import get_board, get_article, delete_article, edit_article, create_article
-from helper.permission import can_write, is_anybody, is_author, is_author_or_admin
+from helper.model_control import get_board, get_article, delete_article, \
+    edit_article, create_article
+from helper.permission import can_write, is_anybody, is_author, \
+    is_author_or_admin
 from helper.resource import YuzukiResource, need_anybody_permission
 from helper.template import render_template
 from helper.slack import post_message as post_message_to_slack
 
 article_content_re = re.compile(r'&(#\d+|[a-z]+);')
-'''
-For editing article content with codemirror,
-HTML entities in article should be re-encoded into HTML entity.
-'''
+
+
 def replaceArticleContentForEdit(article):
+    '''
+    For editing article content with codemirror,
+    HTML entities in article should be re-encoded into HTML entity.
+    '''
     article.content = re.sub(article_content_re, r'&#38;\1;', article.content)
     return article
+
 
 class ArticleParent(YuzukiResource):
     isLeaf = False
@@ -99,7 +104,7 @@ class ArticleEdit(YuzukiResource):
         article_id = request.get_argument("id")
         article = get_article(request, article_id)
         if is_author(request, article):
-            context = {"article": replaceArticleContentForEdit(article) }
+            context = {"article": replaceArticleContentForEdit(article)}
             return render_template("article_edit.html", request, context)
         else:
             raise Unauthorized()

@@ -9,7 +9,8 @@ from twisted.web.server import NOT_DONE_YET
 from config.config import CHAT_PER_PAGE, CHAT_CONNECTION_INTERVAL
 from exception import BadRequest
 from helper.chat_cmd import ChatCmdManager
-from helper.model_control import get_chat_newer_than, get_chat_page, create_chat
+from helper.model_control import get_chat_newer_than, get_chat_page,\
+    create_chat
 from helper.resource import YuzukiResource, need_anybody_permission
 from helper.template import render_template
 from model.chat import Chat as ChatModel
@@ -152,7 +153,8 @@ class ChatUserStream(YuzukiResource):
     @need_anybody_permission
     def render_GET(self, request):
         self.request_pool.append(request)
-        call = reactor.callLater(CHAT_CONNECTION_INTERVAL - 5, self.send_refresh_signal, request)
+        call = reactor.callLater(CHAT_CONNECTION_INTERVAL - 5,
+                                 self.send_refresh_signal, request)
         request.notifyFinish().addErrback(self.response_failed, request, call)
         refresh_flag = False
         if request.user not in self.user_pool:
@@ -160,7 +162,8 @@ class ChatUserStream(YuzukiResource):
         self.user_pool[request.user] = datetime.now()
         new_user_pool = dict()
         for user, connection_time in self.user_pool.iteritems():
-            if (datetime.now() - connection_time).seconds <= CHAT_CONNECTION_INTERVAL:
+            if (datetime.now() - connection_time).seconds <= \
+               CHAT_CONNECTION_INTERVAL:
                 new_user_pool[user] = connection_time
             else:
                 refresh_flag = True

@@ -5,6 +5,7 @@ from model.board import Board
 
 class SideMenuElement(object):
     anybody_allowed = False
+
     def render(self, is_anybody):
         if not self.anybody_allowed and not is_anybody:
             return u""
@@ -59,6 +60,7 @@ class BoardMenuElement(SideMenuElement):
             "repr": self.board.repr,
         }
 
+
 class LinkMenuElement(SideMenuElement):
     def __init__(self, name, path, repr, anybody_allowed):
         self.path = path
@@ -78,6 +80,7 @@ class LinkMenuElement(SideMenuElement):
             "path": self.path,
             "repr": self.repr,
         }
+
 
 class ArbitraryMenuElement(SideMenuElement):
     def __init__(self, content, anybody_allowed):

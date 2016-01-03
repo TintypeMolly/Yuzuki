@@ -2,7 +2,8 @@
 from datetime import datetime
 from hashlib import sha256
 
-from sqlalchemy import Boolean, Column, DateTime, Integer, String, Text, ForeignKey, CHAR
+from sqlalchemy import Boolean, Column, DateTime, Integer, String, Text,\
+    ForeignKey, CHAR
 from sqlalchemy.orm import relationship
 
 from helper.content import markdown_and_linkify
@@ -29,7 +30,8 @@ class User(Base):
     is_blocked = Column(Boolean, default=False)
     chat_color = Column(CHAR(6), default="000000")
 
-    def __init__(self, username, nickname, password, pd_realname, pd_email, pd_address, pd_phone, pd_bunryu, pd_bio):
+    def __init__(self, username, nickname, password, pd_realname, pd_email,
+                 pd_address, pd_phone, pd_bunryu, pd_bio):
         self.username = username
         self.nickname = nickname
         self.password = pbkdf2(password)

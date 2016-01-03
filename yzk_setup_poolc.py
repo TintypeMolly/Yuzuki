@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+# flake8: noqa
 from hashlib import sha256
 
 from helper.database import DatabaseHelper

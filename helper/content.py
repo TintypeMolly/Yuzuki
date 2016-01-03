@@ -21,12 +21,15 @@ def markdown_convert(source):
 
 def markdown_and_linkify(source):
     source = markdown_convert(source)
-    source = linkify(source, parse_email=True, callbacks=[callbacks.nofollow, target_blank_except_footnote])
+    source = linkify(source, parse_email=True,
+                     callbacks=[callbacks.nofollow,
+                                target_blank_except_footnote])
     return source
 
 
 def target_blank_except_footnote(attrs, new=False):
-    if "class" in attrs and attrs["class"] in ("footnote-backref", "footnote-ref"):
+    if "class" in attrs and \
+       attrs["class"] in ("footnote-backref", "footnote-ref"):
         return attrs
     else:
         return callbacks.target_blank(attrs, new)

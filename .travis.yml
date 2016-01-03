@@ -1,0 +1,17 @@
+language: python
+
+sudo: false
+
+addons:
+  apt:
+    packages:
+      - python-virtualenv
+
+before_install:
+  - virtualenv .venv
+  - . ./.venv/bin/activate
+  - pip install -r requirements.txt
+  - pip install flake8
+
+script:
+  - flake8 --exclude .venv .

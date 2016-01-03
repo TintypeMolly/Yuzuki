@@ -21,7 +21,8 @@ class Board(Base):
     enabled = Column(Boolean(), default=True)
     articles = relationship("Article")
 
-    def __init__(self, name, repr, write_group, comment_group, classification=None, order=None):
+    def __init__(self, name, repr, write_group, comment_group,
+                 classification=None, order=None):
         self.name = name
         self.repr = repr
         self.write_group = write_group

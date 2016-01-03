@@ -2,8 +2,10 @@
 import json
 
 from exception import BadRequest, Unauthorized
-from helper.model_control import get_article, get_reply_page, get_reply, delete_reply, edit_reply, create_reply
-from helper.permission import is_anybody, can_comment, is_author_or_admin, is_author
+from helper.model_control import get_article, get_reply_page, get_reply,\
+    delete_reply, edit_reply, create_reply
+from helper.permission import is_anybody, can_comment, is_author_or_admin,\
+    is_author
 from helper.resource import YuzukiResource, need_anybody_permission
 
 

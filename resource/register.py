@@ -33,7 +33,8 @@ class Register(YuzukiResource):
         pd_phone = request.get_argument("pd_phone") or None
         pd_bunryu = request.get_argument("pd_bunryu") or None
         pd_bio = request.get_argument("pd_bio") or None
-        new_user = User(username, nickname, password, pd_realname, pd_email, pd_address, pd_phone, pd_bunryu, pd_bio)
+        new_user = User(username, nickname, password, pd_realname,
+                        pd_email, pd_address, pd_phone, pd_bunryu, pd_bio)
         err = self.check_user_data_valid(request, new_user)
         if not err:
             request.dbsession.add(new_user)
@@ -77,7 +78,8 @@ class Register(YuzukiResource):
             return u"이미 사용되고 있는 별명입니다."
 
         # bunryu existence check
-        query = request.dbsession.query(Group).filter(Group.uid == new_user.pd_bunryu)
+        query = request.dbsession.query(Group)\
+                                 .filter(Group.uid == new_user.pd_bunryu)
         result = query.all()
         if not result:
             return u"존재하지 않는 분류 그룹입니다."

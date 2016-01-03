@@ -38,7 +38,8 @@ class Reply(Base):
             "created_at": self.created_at.strftime("%y-%m-%d %H:%M:%S"),
         }
         if self.is_modified:
-            data["last_modified"] = self.last_modified.strftime("%y-%m-%d %H:%M:%S")
+            data["last_modified"] = self.last_modified.strftime(
+                "%y-%m-%d %H:%M:%S")
         return data
 
     def get_cleaned_content(self):

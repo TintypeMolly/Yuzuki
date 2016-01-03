@@ -55,8 +55,10 @@ class BoardManagement(YuzukiResource):
 
     @need_admin_permission
     def render_GET(self, request):
-        boards = request.dbsession.query(Board).options(subqueryload(Board.write_group)).options(
-            subqueryload(Board.write_group)).all()
+        boards = request.dbsession.query(Board)\
+                                  .options(subqueryload(Board.write_group))\
+                                  .options(subqueryload(Board.write_group))\
+                                  .all()
         context = {"boards": boards}
         return render_template("admin_board.html", request, context)
 

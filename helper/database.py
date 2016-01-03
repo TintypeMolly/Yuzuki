@@ -1,4 +1,5 @@
 # -*- coding: utf-8 -*-
+
 from sqlalchemy import create_engine
 from sqlalchemy.orm import sessionmaker
 
@@ -7,20 +8,21 @@ from model.base import Base
 
 
 # import all models you defined here
-from model.association.user_group import UserGroupAssociation
-from model.article import Article
-from model.article_record import ArticleRecord
-from model.board import Board
-from model.chat import Chat
-from model.chat_kv import ChatKV
-from model.group import Group
-from model.metadata import MetaData
-from model.reply import Reply
-from model.reply_record import ReplyRecord
-from model.user import User
+from model.association.user_group import UserGroupAssociation  # noqa
+from model.article import Article  # noqa
+from model.article_record import ArticleRecord  # noqa
+from model.board import Board  # noqa
+from model.chat import Chat  # noqa
+from model.chat_kv import ChatKV  # noqa
+from model.group import Group  # noqa
+from model.metadata import MetaData  # noqa
+from model.reply import Reply  # noqa
+from model.reply_record import ReplyRecord  # noqa
+from model.user import User  # noqa
+
 
 class DatabaseHelper(object):
-    _engine = create_engine(DB_CONNECTION_STRING)
+    _engine = create_engine(DB_CONNECTION_STRING, pool_recycle=3600)
     _Session = sessionmaker(bind=_engine)
 
     @classmethod

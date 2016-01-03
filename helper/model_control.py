@@ -3,6 +3,7 @@ from datetime import datetime
 
 from bleach import clean, linkify, callbacks
 from sqlalchemy.orm import subqueryload
+from sqlalchemy.sql.expression import true
 
 from config.config import ARTICLE_PER_PAGE, REPLY_PER_PAGE, CHAT_PER_PAGE
 from exception import PageNotFound
@@ -30,8 +31,11 @@ def get_board(request, board_name):
 
 
 def get_article(request, article_id):
-    query = request.dbsession.query(Article).filter(Article.uid == article_id).filter(Article.enabled == True).options(
-        subqueryload(Article.board)).options(subqueryload(Article.user))
+    query = request.dbsession.query(Article)\
+                             .filter(Article.uid == article_id)\
+                             .filter(Article.enabled == true())\
+                             .options(subqueryload(Article.board))\
+                             .options(subqueryload(Article.user))
     result = query.all()
     if not result:
         raise PageNotFound()
@@ -58,16 +62,22 @@ def edit_article(request, article, subject, content):
 
 
 def get_article_page(request, board, page):
-    query = request.dbsession.query(Article).filter(Article.enabled == True).filter(Article.board == board).order_by(
-        Article.uid.desc()).options(subqueryload(Article.user))
+    query = request.dbsession.query(Article)\
+                             .filter(Article.enabled == true())\
+                             .filter(Article.board == board)\
+                             .order_by(Article.uid.desc())\
+                             .options(subqueryload(Article.user))
     start_idx = ARTICLE_PER_PAGE * (page - 1)
     end_idx = ARTICLE_PER_PAGE + start_idx
     return query[start_idx:end_idx]
 
 
 def get_reply_page(request, article, page):
-    query = request.dbsession.query(Reply).filter(Reply.enabled == True).filter(Reply.article == article).order_by(
-        Reply.uid.asc()).options(subqueryload(Reply.user))
+    query = request.dbsession.query(Reply)\
+                             .filter(Reply.enabled == true())\
+                             .filter(Reply.article == article)\
+                             .order_by(Reply.uid.asc())\
+                             .options(subqueryload(Reply.user))
     start_idx = REPLY_PER_PAGE * (page - 1)
     end_idx = REPLY_PER_PAGE + start_idx
     replies = query[start_idx:end_idx]
@@ -75,8 +85,12 @@ def get_reply_page(request, article, page):
 
 
 def get_reply(request, reply_id):
-    query = request.dbsession.query(Reply).filter(Reply.uid == reply_id).filter(Reply.enabled == True).options(
-        subqueryload(Reply.user)).options(subqueryload(Reply.article).subqueryload(Article.board))
+    query = request.dbsession.query(Reply)\
+                             .filter(Reply.uid == reply_id)\
+                             .filter(Reply.enabled == true())\
+                             .options(subqueryload(Reply.user))\
+                             .options(subqueryload(Reply.article)
+                                      .subqueryload(Article.board))
     result = query.all()
     if not result:
         raise PageNotFound()
@@ -96,7 +110,8 @@ def delete_reply(request, reply):
 def edit_reply(request, reply, content):
     reply_record = ReplyRecord(reply)
     reply.content = linkify(clean(content, tags=list()), parse_email=True,
-                            callbacks=[callbacks.nofollow, callbacks.target_blank])
+                            callbacks=[callbacks.nofollow,
+                                       callbacks.target_blank])
     request.dbsession.add(reply_record)
 
 
@@ -116,7 +131,8 @@ def create_reply(request, article, content):
     article.reply_count += 1
     reply.user = request.user
     reply.content = linkify(clean(content, tags=list()), parse_email=True,
-                            callbacks=[callbacks.nofollow, callbacks.target_blank])
+                            callbacks=[callbacks.nofollow,
+                                       callbacks.target_blank])
     return reply
 
 
@@ -124,33 +140,44 @@ def create_chat(request, content, speaker=None):
     chat = Chat()
     chat.user = speaker if speaker else request.user
     chat.content = linkify(clean(content, tags=list()), parse_email=True,
-                           callbacks=[callbacks.nofollow, callbacks.target_blank])
+                           callbacks=[callbacks.nofollow,
+                                      callbacks.target_blank])
     return chat
 
 
 def get_chat_page(request, page):
-    query = request.dbsession.query(Chat).order_by(Chat.uid.desc()).options(subqueryload(Chat.user))
+    query = request.dbsession.query(Chat)\
+                             .order_by(Chat.uid.desc())\
+                             .options(subqueryload(Chat.user))
     start_idx = CHAT_PER_PAGE * (page - 1)
     end_idx = CHAT_PER_PAGE + start_idx
     return query[start_idx:end_idx]
 
 
 def get_chat_newer_than(request, chat_id):
-    query = request.dbsession.query(Chat).filter(Chat.uid > chat_id).order_by(Chat.uid.desc()).options(
-        subqueryload(Chat.user))
+    query = request.dbsession.query(Chat)\
+                             .filter(Chat.uid > chat_id)\
+                             .order_by(Chat.uid.desc())\
+                             .options(subqueryload(Chat.user))
     return query[0:CHAT_PER_PAGE]
 
 
 def get_not_anybody_user(request):
-    anybody_query = request.dbsession.query(Group.uid).filter(Group.name == "anybody").subquery()
+    anybody_query = request.dbsession.query(Group.uid)\
+                                     .filter(Group.name == "anybody")\
+                                     .subquery()
     assoc_query = request.dbsession.query(UserGroupAssociation.user_id).filter(
         UserGroupAssociation.group_id == anybody_query).subquery()
-    query = request.dbsession.query(User).filter(User.uid.notin_(assoc_query)).options(subqueryload(User.bunryu))
+    query = request.dbsession.query(User)\
+                             .filter(User.uid.notin_(assoc_query))\
+                             .options(subqueryload(User.bunryu))
     return query.all()
 
 
 def get_chat_kv(request, key):
-    query = request.dbsession.query(ChatKV).filter(ChatKV.key == key).options(subqueryload(ChatKV.user))
+    query = request.dbsession.query(ChatKV)\
+                             .filter(ChatKV.key == key)\
+                             .options(subqueryload(ChatKV.user))
     result = query.all()
     if result:
         return result[0]
@@ -159,7 +186,9 @@ def get_chat_kv(request, key):
 
 
 def set_chat_kv(request, key, value):
-    query = request.dbsession.query(ChatKV).filter(ChatKV.key == key).options(subqueryload(ChatKV.user))
+    query = request.dbsession.query(ChatKV)\
+                             .filter(ChatKV.key == key)\
+                             .options(subqueryload(ChatKV.user))
     result = query.all()
     if result:
         kv = result[0]
@@ -174,10 +203,13 @@ def set_chat_kv(request, key, value):
 
 
 def search_chat_kv_by_key(request, search_word):
-    query = request.dbsession.query(ChatKV).filter(ChatKV.key.like("%" + search_word + "%"))
+    query = request.dbsession.query(ChatKV)\
+                             .filter(ChatKV.key.like("%" + search_word + "%"))
     return query.all()
 
 
 def search_chat_kv_by_value(request, search_word):
-    query = request.dbsession.query(ChatKV).filter(ChatKV.value.like("%" + search_word + "%"))
+    query = request.dbsession.query(ChatKV)\
+                             .filter(ChatKV.value.like(
+                                 "%" + search_word + "%"))
     return query.all()

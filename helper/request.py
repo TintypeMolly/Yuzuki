@@ -19,21 +19,24 @@ from model.user import User
 class NoArgument:
     pass
 
+
 class YuzukiRequest(Request):
     dbsession = DatabaseHelper.session()
 
     def initialize(self, resource):
         """
-        if you need to do something just before or just after a request is initialized,
-        write it here
+        if you need to do something just before or just after a request is
+        initialized, write it here
         """
         self._initial_session = copy.deepcopy(self.yzk_session)
-        auto_login = "auto_id" in self.received_cookies and "auto_pw" in self.received_cookies
+        auto_login = "auto_id" in self.received_cookies and\
+                     "auto_pw" in self.received_cookies
         if auto_login:
             username = self.getCookie("auto_id")
             password = self.getCookie("auto_pw")
-            if self.user == None:
-                query = self.dbsession.query(User).filter(User.username == username)
+            if self.user is None:
+                query = self.dbsession.query(User)\
+                                      .filter(User.username == username)
                 result = query.all()
                 if result:
                     user = result[0]
@@ -46,7 +49,8 @@ class YuzukiRequest(Request):
             else:
                 username = self.getCookie("auto_id")
                 password = self.getCookie("auto_pw")
-                if self.user.username == username and self.user.check_password(password):
+                if self.user.username == username and\
+                   self.user.check_password(password):
                     # refresh auto login cookie expire time
                     self.set_auto_login(username, password)
 
@@ -66,8 +70,8 @@ class YuzukiRequest(Request):
 
     def finalize(self):
         """
-        if you need to do something just before or just after a request is finished,
-        write it here
+        if you need to do something just before or just after a request is
+        finished, write it here
         """
         if self._initial_session != self.yzk_session:
             self.session.redis_sync()
@@ -93,11 +97,14 @@ class YuzukiRequest(Request):
     def user(self):
         if hasattr(self, "_user"):
             return self._user
-        user_id = self.yzk_session["login_user"] if self._is_user_logged_in() else None
+        user_id = self.yzk_session["login_user"] \
+            if self._is_user_logged_in()else None
         if not user_id:
             return None
         else:
-            query = self.dbsession.query(User).filter(User.uid == user_id).options(subqueryload(User.groups))
+            query = self.dbsession.query(User)\
+                                  .filter(User.uid == user_id)\
+                                  .options(subqueryload(User.groups))
             result = query.all()
             user = result[0]
             self._user = user
@@ -135,7 +142,8 @@ class YuzukiRequest(Request):
                     result += key
                     result += "="
                     result += quote(value, "")
-                    if not (i == len(self.args) - 1 and j == len(self.args[key]) - 1):
+                    if not (i == len(self.args) - 1 and
+                            j == len(self.args[key]) - 1):
                         result += "&"
         return result
 
@@ -151,7 +159,8 @@ class YuzukiRequest(Request):
             else:
                 self.logger.error(reason)
                 self.setResponseCode(INTERNAL_SERVER_ERROR)
-                body = generate_error_message(self, INTERNAL_SERVER_ERROR, u"서버 에러가 발생하였습니다.")
+                body = generate_error_message(self, INTERNAL_SERVER_ERROR,
+                                              u"서버 에러가 발생하였습니다.")
             if issubclass(reason.type, SQLAlchemyError):
                 YuzukiRequest.dbsession.close()
                 YuzukiRequest.dbsession = DatabaseHelper.session()
