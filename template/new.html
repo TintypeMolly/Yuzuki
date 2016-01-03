@@ -5,7 +5,7 @@
 {% block caption %}
     <th class="subject">내용</th>
     <th class="author">작성자</th>
-    <th class="timestamp">작성시간</th>
+    <th class="timestamp">최근수정일자</th>
 {% endblock %}
 {% block board_content %}
     {% for item in items %}
@@ -15,7 +15,7 @@
             </td>
             <td class="author"><a onclick="open_user_popup({{ item["user"].uid }})">{{ item["user"].nickname | e }}</a>
             </td>
-            <td class="timestamp">{{ item["created_at"].strftime("%y-%m-%d %H:%M:%S") }}</td>
+            <td class="timestamp">{{ item["last_modified"].strftime("%y-%m-%d %H:%M:%S") }}</td>
         </tr>
     {% endfor %}
 {% endblock %}

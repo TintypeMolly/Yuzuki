@@ -22,7 +22,7 @@ class Article(Base):
     compiled_content = Column(Text())
     enabled = Column(Boolean, default=True)
     is_modified = Column(Boolean, default=False)
-    last_modified = Column(DateTime)
+    last_modified = Column(DateTime, default=datetime.now)
     created_at = Column(DateTime, default=datetime.now)
     deleted_at = Column(DateTime)
     deleted_user_id = Column(Integer(), ForeignKey("user.uid"))
