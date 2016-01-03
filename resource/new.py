@@ -18,20 +18,22 @@ class New(YuzukiResource):
         articles = request.dbsession\
                           .query(Article)\
                           .filter(Article.enabled)\
-                          .order_by(Article.last_modified.desc())\
+                          .order_by(Article.last_modified.desc(),
+                                    Article.uid.desc())\
                           .options(
                               subqueryload(Article.user))[0:NEW_ITEM_COUNT]
         replies = request.dbsession\
                          .query(Reply)\
                          .filter(Reply.enabled)\
-                         .order_by(Reply.last_modified.desc())\
+                         .order_by(Reply.last_modified.desc(),
+                                   Reply.uid.desc())\
                          .options(subqueryload(Reply.user))[0:NEW_ITEM_COUNT]
         articles_packed = [pack_article(article) for article in articles]
         replies_packed = [pack_reply(reply) for reply in replies]
         items = list()
         items.extend(articles_packed)
         items.extend(replies_packed)
-        items = sorted(items, key=lambda i: i["last_modified"],
+        items = sorted(items, key=lambda i: (i["last_modified"], i["uid"]),
                        reverse=True)[0:NEW_ITEM_COUNT]
         page = request.get_argument_int("page", 1)
         page_total = len(items) / ARTICLE_PER_PAGE
@@ -55,6 +57,7 @@ def pack_reply(reply):
     item["content"] = reply.get_cleaned_content()
     item["user"] = reply.user
     item["last_modified"] = reply.last_modified
+    item["uid"] = reply.uid
     return item
 
 
@@ -65,4 +68,5 @@ def pack_article(article):
     item["content"] = escape(article.subject)
     item["user"] = article.user
     item["last_modified"] = article.last_modified
+    item["uid"] = article.uid
     return item
