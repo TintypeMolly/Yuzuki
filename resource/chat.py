@@ -99,7 +99,7 @@ class ChatMessageStream(YuzukiResource):
             try:
                 req.write("message coming")
                 req.finish()
-            except:
+            except BaseException:
                 pass
         self.request_pool = []
         return "chat posted"
