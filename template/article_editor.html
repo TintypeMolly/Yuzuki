@@ -66,10 +66,10 @@
             .val(editor.getValue());
         }
       )
-			$('form').submit(function(e) {
-				if(!$('textarea[name=content]').val()) {
-					e.preventDefault(e);
-				}
-			});
+      $('form').submit(function(e) {
+        if(!$('textarea[name=content]').val()) {
+          e.preventDefault(e);
+        }
+      });
     </script>
 {% endblock %}
