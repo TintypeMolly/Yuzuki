@@ -36,7 +36,7 @@
                 <label for="exampleInputPassword1">
                 	내용 (<a href="/page/md_manual" target="_blank">서식 도움말</a>)
 								</label>
-                <textarea name="content" class="form-control" rows="20" required>{{ content }}</textarea>
+                <textarea name="content" class="form-control" rows="20">{{ content }}</textarea>
             </div>
             <input type="submit" class="btn btn-default" value="완료"/>
         </form>
@@ -66,5 +66,10 @@
             .val(editor.getValue());
         }
       )
+			$('form').submit(function(e) {
+				if(!$('textarea[name=content]').val()) {
+					e.preventDefault(e);
+				}
+			});
     </script>
 {% endblock %}
